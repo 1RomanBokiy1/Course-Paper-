@@ -127,3 +127,8 @@ class VideoConverterApp:
             messagebox.showinfo("Успех", "Видео успешно сконвертировано!")
         except Exception as e:
             messagebox.showerror("Ошибка", f"Произошла ошибка: {str(e)}")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = VideoConverterApp(root)
+    root.mainloop()
