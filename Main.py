@@ -1,6 +1,11 @@
+import os
+import sys
 import tkinter as tk
+from tkinter import filedialog, simpledialog, messagebox
+from moviepy.editor import VideoFileClip
 from tkinter import ttk
-
+import shutil
+from pathlib import Path
 
 class VideoConverterApp:
     def __init__(self, master):
@@ -63,3 +68,62 @@ class VideoConverterApp:
         elif file_number == 2:
             self.source_file_entry2.delete(0, tk.END)
             self.source_file_entry2.insert(0, file_path)
+    def convert_video(self):
+        source_file1 = self.source_file_entry1.get()
+        source_file2 = self.source_file_entry2.get()
+
+        if not source_file1 and not source_file2:
+            messagebox.showerror("Ошибка", "Выберите хотя бы один исходный видеофайл")
+            return
+
+        try:
+            script_dir = Path(sys._MEIPASS) if getattr(sys, 'frozen', False) else Path(
+                os.path.dirname(os.path.realpath(__file__)))
+
+            if source_file1:
+                temp_file_name_1 = script_dir / Path(f"temp_video_{Path(source_file1).stem}.mp4")
+
+                clip_1 = VideoFileClip(source_file1)
+                clip_1.write_videofile(str(temp_file_name_1), codec="libx264", audio_codec="aac")
+                clip_1.close()
+
+                output_folder_1 = filedialog.askdirectory()
+                if not output_folder_1:
+                    messagebox.showerror("Ошибка", "Выберите папку для сохранения первого файла")
+                    return
+
+                selected_codec_1 = self.codec_var1.get()
+                output_file_name_1 = simpledialog.askstring('Название файла', 'Введите название первого файла')
+                if not output_file_name_1:
+                    messagebox.showerror("Ошибка", "Введите название первого файла")
+                    return
+
+                output_file_1 = Path(output_folder_1) / Path(f"{output_file_name_1}.{selected_codec_1}")
+
+                shutil.move(str(temp_file_name_1), str(output_file_1))
+
+            if source_file2:
+                temp_file_name_2 = script_dir / Path(f"temp_video_{Path(source_file2).stem}.mp4")
+
+                clip_2 = VideoFileClip(source_file2)
+                clip_2.write_videofile(str(temp_file_name_2), codec="libx264", audio_codec="aac")
+                clip_2.close()
+
+                output_folder_2 = filedialog.askdirectory()
+                if not output_folder_2:
+                    messagebox.showerror("Ошибка", "Выберите папку для сохранения второго файла")
+                    return
+
+                selected_codec_2 = self.codec_var2.get()
+                output_file_name_2 = simpledialog.askstring('Название файла', 'Введите название второго файла')
+                if not output_file_name_2:
+                    messagebox.showerror("Ошибка", "Введите название второго файла")
+                    return
+
+                output_file_2 = Path(output_folder_2) / Path(f"{output_file_name_2}.{selected_codec_2}")
+
+                shutil.move(str(temp_file_name_2), str(output_file_2))
+
+            messagebox.showinfo("Успех", "Видео успешно сконвертировано!")
+        except Exception as e:
+            messagebox.showerror("Ошибка", f"Произошла ошибка: {str(e)}")
