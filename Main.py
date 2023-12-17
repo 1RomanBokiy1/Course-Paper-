@@ -55,3 +55,11 @@ class VideoConverterApp:
 
         self.convert_button = tk.Button(master, text="Конвертировать", bg="white", fg="black", command=self.convert_video)
         self.convert_button.grid(row=3, column=0, columnspan=4, padx=2, pady=10, sticky="nsew")
+    def browse_file(self, file_number):
+        file_path = filedialog.askopenfilename(filetypes=[("Video files", "*.mp4;*.avi;*.mpeg;*.mov;*.flv;*.webm;*.mkv")])
+        if file_number == 1:
+            self.source_file_entry1.delete(0, tk.END)
+            self.source_file_entry1.insert(0, file_path)
+        elif file_number == 2:
+            self.source_file_entry2.delete(0, tk.END)
+            self.source_file_entry2.insert(0, file_path)
